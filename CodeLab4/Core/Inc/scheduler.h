@@ -11,18 +11,15 @@
 
 #include <stdint.h>
 
-// Maximum number of tasks
 #define SCH_MAX_TASKS 10
 
-// Task structure
 typedef struct {
-    void (*pTask)(void);    // Pointer to task function
-    uint32_t Delay;         // Ticks until the function will next be run
-    uint32_t Period;        // Interval between subsequent runs
-    uint8_t RunMe;          // Incremented when task is due to run
+    void (*pTask)(void);
+    uint32_t Delay;
+    uint32_t Period;
+    uint8_t RunMe;
 } sTask;
 
-// Function prototypes
 void SCH_Init(void);
 void SCH_Update(void);
 void SCH_Dispatch_Tasks(void);

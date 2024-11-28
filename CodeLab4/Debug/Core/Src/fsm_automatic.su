@@ -1,0 +1,5 @@
+fsm_automatic.c:10:6:NormalMode	8	static
+fsm_automatic.c:95:6:toggle_red	8	static
+fsm_automatic.c:104:6:toggle_yellow	8	static
+fsm_automatic.c:113:6:toggle_green	8	static
+fsm_automatic.c:122:6:fsm_automatic	8	static

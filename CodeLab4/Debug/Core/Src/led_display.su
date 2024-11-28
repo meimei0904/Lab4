@@ -1,0 +1,5 @@
+led_display.c:13:6:resetCountValue	4	static
+led_display.c:20:13:display7SEG	16	static
+led_display.c:117:12:get7SEG1Value	4	static
+led_display.c:132:12:get7SEG2Value	4	static
+led_display.c:149:6:LEDScanning	8	static

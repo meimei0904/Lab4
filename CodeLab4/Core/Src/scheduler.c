@@ -6,12 +6,10 @@
  */
 #include "scheduler.h"
 
-// Task array
 sTask SCH_tasks_G[SCH_MAX_TASKS];
 
-// Initialize scheduler
 void SCH_Init(void) {
-    for (uint32_t i = 0; i < SCH_MAX_TASKS; i++) {
+    for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
         SCH_tasks_G[i].pTask = 0;
         SCH_tasks_G[i].Delay = 0;
         SCH_tasks_G[i].Period = 0;
@@ -19,36 +17,9 @@ void SCH_Init(void) {
     }
 }
 
-// Add a task to the scheduler
-uint32_t SCH_Add_Task(void (*pFunction)(), uint32_t DELAY, uint32_t PERIOD) {
-    for (uint32_t i = 0; i < SCH_MAX_TASKS; i++) {
-        if (SCH_tasks_G[i].pTask == 0) { // Found an empty slot
-            SCH_tasks_G[i].pTask = pFunction;
-            SCH_tasks_G[i].Delay = DELAY;
-            SCH_tasks_G[i].Period = PERIOD;
-            SCH_tasks_G[i].RunMe = 0;
-            return i; // Return task ID
-        }
-    }
-    return SCH_MAX_TASKS; // No available task slot
-}
-
-// Delete a task from the scheduler
-uint8_t SCH_Delete_Task(uint32_t taskID) {
-    if (taskID < SCH_MAX_TASKS && SCH_tasks_G[taskID].pTask != 0) {
-        SCH_tasks_G[taskID].pTask = 0;
-        SCH_tasks_G[taskID].Delay = 0;
-        SCH_tasks_G[taskID].Period = 0;
-        SCH_tasks_G[taskID].RunMe = 0;
-        return 0; // Success
-    }
-    return 1; // Error
-}
-
-// Update tasks
 void SCH_Update(void) {
-    for (uint32_t i = 0; i < SCH_MAX_TASKS; i++) {
-        if (SCH_tasks_G[i].pTask != 0) {
+    for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
+        if (SCH_tasks_G[i].pTask) {
             if (SCH_tasks_G[i].Delay == 0) {
                 SCH_tasks_G[i].RunMe++;
                 if (SCH_tasks_G[i].Period) {
@@ -61,11 +32,10 @@ void SCH_Update(void) {
     }
 }
 
-// Dispatch tasks
 void SCH_Dispatch_Tasks(void) {
-    for (uint32_t i = 0; i < SCH_MAX_TASKS; i++) {
+    for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
         if (SCH_tasks_G[i].RunMe > 0) {
-            (*SCH_tasks_G[i].pTask)(); // Run the task
+            (*SCH_tasks_G[i].pTask)();
             SCH_tasks_G[i].RunMe--;
             if (SCH_tasks_G[i].Period == 0) {
                 SCH_Delete_Task(i);
@@ -73,5 +43,30 @@ void SCH_Dispatch_Tasks(void) {
         }
     }
 }
+
+uint32_t SCH_Add_Task(void (*pFunction)(), uint32_t DELAY, uint32_t PERIOD) {
+    for (uint8_t i = 0; i < SCH_MAX_TASKS; i++) {
+        if (SCH_tasks_G[i].pTask == 0) {
+            SCH_tasks_G[i].pTask = pFunction;
+            SCH_tasks_G[i].Delay = DELAY;
+            SCH_tasks_G[i].Period = PERIOD;
+            SCH_tasks_G[i].RunMe = (DELAY == 0) ? 1 : 0;
+            return i;
+        }
+    }
+    return SCH_MAX_TASKS;
+}
+
+uint8_t SCH_Delete_Task(uint32_t taskID) {
+    if (taskID < SCH_MAX_TASKS && SCH_tasks_G[taskID].pTask) {
+        SCH_tasks_G[taskID].pTask = 0;
+        SCH_tasks_G[taskID].Delay = 0;
+        SCH_tasks_G[taskID].Period = 0;
+        SCH_tasks_G[taskID].RunMe = 0;
+        return 0;
+    }
+    return 1;
+}
+
 
 
